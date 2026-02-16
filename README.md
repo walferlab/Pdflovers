@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PDF Lovers
 
-## Getting Started
+A Next.js App Router platform for discovering and downloading curated PDFs.
 
-First, run the development server:
+## Target Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Frontend: Next.js App Router
+- Backend DB: Supabase Postgres
+- Search: Postgres Full Text Search
+- Caching: React Query + Vercel Cache
+- Images: Supabase Storage CDN
+- Downloads: Redirect API + tracking
+
+## Step-by-Step Build Plan
+
+1. Frontend foundation and UI flows (current step)
+2. Supabase schema and server data layer
+3. Full-text search integration with ranking
+4. Cache strategy (React Query + Vercel)
+5. Image pipeline with Supabase Storage CDN
+6. Download redirect API + tracking analytics
+
+## Step 1 Delivered
+
+- Next.js App Router project scaffolded from scratch.
+- Responsive frontend routes:
+  - `/` landing page
+  - `/library` search and browse page
+  - `/pdf/[slug]` PDF detail page shell
+- Shared component structure:
+  - site header/footer
+  - hero/search block
+  - category strip
+  - reusable PDF card grid
+- React Query provider wired at app root (for upcoming Supabase data fetching).
+- Frontend-only mock data utilities for quick UI iteration.
+
+## Project Structure
+
+```text
+src/
+  app/
+    layout.js
+    page.js
+    library/page.js
+    pdf/[slug]/page.js
+  components/
+    home/
+    layout/
+    pdf/
+    ui/
+  lib/
+    pdf-data.js
+    format.js
+  providers/
+    query-provider.js
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Run Locally
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Then open `http://localhost:3000`.
 
-## Learn More
+## Validation
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run lint
+npm run build
+```
