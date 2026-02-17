@@ -16,6 +16,12 @@ export function SiteFooter() {
         <div className="footer-links">
           <Link href="/">Home</Link>
           <Link href="/library">Library</Link>
+          <Link href="/about-us">About Us</Link>
+          <Link href="/contact-us">Contact Us</Link>
+          <Link href="/request-pdf">Request PDF</Link>
+          <Link href="/privacy-policy">Privacy Policy</Link>
+          <Link href="/terms-of-service">Terms of Service</Link>
+          <Link href="/disclaimer">Disclaimer</Link>
         </div>
       </div>
       <p className="copyright">{year} PDF Lovers.</p>

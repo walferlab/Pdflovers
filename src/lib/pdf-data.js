@@ -11,26 +11,27 @@ export const pdfCategories = [
 
 export const pdfLibrary = [
   {
-    id: "pdf-001",
+    id: 1001,
     slug: "clean-architecture-handbook",
     title: "Clean Architecture Handbook",
     author: "Nora Reid",
     category: "Engineering",
+    tags: ["Architecture", "Backend", "Scalability"],
     pages: 312,
     downloads: 12943,
     rating: 4.8,
     summary:
       "A practical architecture guide for shipping maintainable web and API systems in teams.",
-    accentFrom: "#ff8f4e",
-    accentTo: "#ffc27a",
+ 
     publishedAt: "2025-09-03",
   },
   {
-    id: "pdf-002",
+    id: 1002,
     slug: "product-led-growth-playbook",
     title: "Product-Led Growth Playbook",
     author: "Maya Chen",
     category: "Product",
+    tags: ["Growth", "Onboarding", "Retention"],
     pages: 226,
     downloads: 9322,
     rating: 4.7,
@@ -41,11 +42,12 @@ export const pdfLibrary = [
     publishedAt: "2025-07-21",
   },
   {
-    id: "pdf-003",
+    id: 1003,
     slug: "figma-design-systems-field-guide",
     title: "Figma Design Systems Field Guide",
     author: "Alia Monroe",
     category: "Design",
+    tags: ["Figma", "UI", "Design System"],
     pages: 188,
     downloads: 11005,
     rating: 4.9,
@@ -56,11 +58,12 @@ export const pdfLibrary = [
     publishedAt: "2025-10-12",
   },
   {
-    id: "pdf-004",
+    id: 1004,
     slug: "sql-for-growth-analytics",
     title: "SQL for Growth Analytics",
     author: "Rafael Gomez",
     category: "Data",
+    tags: ["SQL", "Analytics", "Cohorts"],
     pages: 274,
     downloads: 8244,
     rating: 4.6,
@@ -71,11 +74,12 @@ export const pdfLibrary = [
     publishedAt: "2025-08-29",
   },
   {
-    id: "pdf-005",
+    id: 1005,
     slug: "performance-marketing-blueprint",
     title: "Performance Marketing Blueprint",
     author: "Julius Park",
     category: "Marketing",
+    tags: ["Paid Ads", "Attribution", "Creative Testing"],
     pages: 201,
     downloads: 7639,
     rating: 4.5,
@@ -86,11 +90,12 @@ export const pdfLibrary = [
     publishedAt: "2025-06-10",
   },
   {
-    id: "pdf-006",
+    id: 1006,
     slug: "startup-finance-operating-model",
     title: "Startup Finance Operating Model",
     author: "Adrian Holt",
     category: "Finance",
+    tags: ["Runway", "Budgeting", "Forecasting"],
     pages: 246,
     downloads: 5927,
     rating: 4.4,
@@ -101,11 +106,12 @@ export const pdfLibrary = [
     publishedAt: "2025-05-13",
   },
   {
-    id: "pdf-007",
+    id: 1007,
     slug: "resume-and-interview-manual",
     title: "Resume and Interview Manual",
     author: "Keisha Boyd",
     category: "Career",
+    tags: ["Resume", "Interview", "Job Search"],
     pages: 154,
     downloads: 14570,
     rating: 4.9,
@@ -116,11 +122,12 @@ export const pdfLibrary = [
     publishedAt: "2025-11-19",
   },
   {
-    id: "pdf-008",
+    id: 1008,
     slug: "personal-health-habits-blueprint",
     title: "Personal Health Habits Blueprint",
     author: "Dr. Lena Ortiz",
     category: "Health",
+    tags: ["Habits", "Sleep", "Nutrition"],
     pages: 172,
     downloads: 7011,
     rating: 4.6,
@@ -131,11 +138,12 @@ export const pdfLibrary = [
     publishedAt: "2025-04-02",
   },
   {
-    id: "pdf-009",
+    id: 1009,
     slug: "nextjs-scaling-handbook",
     title: "Next.js Scaling Handbook",
     author: "Iris Navarro",
     category: "Engineering",
+    tags: ["Next.js", "Frontend", "Performance"],
     pages: 336,
     downloads: 9988,
     rating: 4.8,
@@ -148,7 +156,9 @@ export const pdfLibrary = [
 ];
 
 export function topPdfs(limit = 6) {
-  return [...pdfLibrary].sort((a, b) => b.downloads - a.downloads).slice(0, limit);
+  return [...pdfLibrary]
+    .sort((a, b) => (b.downloads ?? 0) - (a.downloads ?? 0))
+    .slice(0, limit);
 }
 
 export function newestPdfs(limit = 6) {
@@ -161,6 +171,10 @@ export function findPdfBySlug(slug) {
   return pdfLibrary.find((pdf) => pdf.slug === slug);
 }
 
+export function findPdfById(id) {
+  return pdfLibrary.find((pdf) => String(pdf.id) === String(id));
+}
+
 export function searchPdfs(query = "") {
   const normalized = query.trim().toLowerCase();
 
@@ -169,7 +183,8 @@ export function searchPdfs(query = "") {
   }
 
   return pdfLibrary.filter((pdf) => {
-    const haystack = [pdf.title, pdf.author, pdf.category, pdf.summary]
+    const haystack = [pdf.title, pdf.author, pdf.category, pdf.summary, pdf.tags?.join(" ")]
+      .filter(Boolean)
       .join(" ")
       .toLowerCase();
 
