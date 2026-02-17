@@ -45,12 +45,16 @@ function logDownloadEvent(admin, payload) {
 }
 
 function incrementDownloadCount(admin, pdf) {
+  if (typeof pdf.dbId !== "number") {
+    return;
+  }
+
   const baseCount = typeof pdf.downloads === "number" ? pdf.downloads : 0;
 
   admin
     .from("pdfs")
     .update({ download_count: baseCount + 1 })
-    .eq("id", Number(pdf.id))
+    .eq("id", pdf.dbId)
     .then(({ error }) => {
       if (error) {
         console.error("Failed to update download count", error);
@@ -110,13 +114,16 @@ export async function GET(request, { params }) {
   const referer = request.headers.get("referer") || null;
 
   if (admin) {
-    logDownloadEvent(admin, {
-      pdf_id: Number(pdf.id),
-      click_stage: stage,
-      referer,
-      user_agent: userAgent,
-      ip_address: ipAddress,
-    });
+    if (typeof pdf.dbId === "number") {
+      logDownloadEvent(admin, {
+        pdf_id: pdf.dbId,
+        click_stage: stage,
+        referer,
+        user_agent: userAgent,
+        ip_address: ipAddress,
+      });
+    }
+
   }
 
   if (stage === CLICK_STAGE_SMART) {

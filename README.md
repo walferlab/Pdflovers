@@ -26,7 +26,7 @@ A Next.js App Router platform for discovering and downloading curated PDFs.
 - Responsive frontend routes:
   - `/` landing page
   - `/library` search and browse page
-  - `/pdf/[id]` PDF detail page (numeric ID route)
+  - `/pdf/[id]` PDF detail page (random public ID route)
 - Shared component structure:
   - site header/footer
   - hero/search block
@@ -104,9 +104,9 @@ NEXT_PUBLIC_DIRECT_DOWNLOAD_URL=
 
 ## Supabase Setup
 
-1. Run SQL in `supabase/schema.sql` in your Supabase SQL editor.
+1. Run migrations from `supabase/migrations/` (or use `npx supabase db push`).
 2. Insert PDF rows in `public.pdfs` (include `smart_link` and `download_url`).
-3. Make sure `search_document` is generated and indexed.
+3. `public_id` is auto-generated as a UUID and used in app URLs.
 
 If Supabase env vars are missing, the app automatically falls back to local mock data.
 
