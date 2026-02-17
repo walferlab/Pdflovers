@@ -3,6 +3,7 @@ import Script from "next/script";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { ScrollToTopOnRoute } from "@/components/layout/scroll-to-top-on-route";
 import { QueryProvider } from "@/providers/query-provider";
 import { JsonLdScript } from "@/components/seo/json-ld";
 import { getOrganizationSchema, getWebsiteSchema, siteConfig } from "@/lib/seo";
@@ -103,6 +104,7 @@ export default function RootLayout({ children }) {
           />
         ) : null}
         <QueryProvider>
+          <ScrollToTopOnRoute />
           <div className="app-shell">
             <SiteHeader />
             <main className="container page-shell">{children}</main>

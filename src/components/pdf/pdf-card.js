@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { CoverImage } from "@/components/pdf/cover-image";
 import { ShareButton } from "@/components/pdf/share-button";
 import { getFallbackCoverGradient } from "@/lib/covers";
 
@@ -11,21 +11,17 @@ export function PdfCard({ pdf }) {
     metaItems.push(`${pdf.pages} pages`);
   }
 
-  const coverStyle = pdf.coverImage
-    ? undefined
-    : {
-        background: getFallbackCoverGradient(pdf.id),
-      };
+  const coverStyle = {
+    background: getFallbackCoverGradient(pdf.id),
+  };
 
   return (
     <article className="pdf-card reveal">
       <div className="pdf-cover" style={coverStyle}>
         {pdf.coverImage ? (
-          <Image
-            className="pdf-cover-image"
+          <CoverImage
             src={pdf.coverImage}
             alt={`${pdf.title} cover`}
-            fill
             sizes="(max-width: 720px) 100vw, 240px"
           />
         ) : null}

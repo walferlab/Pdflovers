@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { GoogleAdSlot } from "@/components/ads/google-ad-slot";
+import { CoverImage } from "@/components/pdf/cover-image";
 import { DownloadAction } from "@/components/pdf/download-action";
 import { ShareButton } from "@/components/pdf/share-button";
 import { JsonLdScript } from "@/components/seo/json-ld";
@@ -69,11 +69,9 @@ export default async function PdfDetailPage({ params }) {
     ]),
   ];
 
-  const coverStyle = pdf.coverImage
-    ? undefined
-    : {
-        background: getFallbackCoverGradient(pdf.id),
-      };
+  const coverStyle = {
+    background: getFallbackCoverGradient(pdf.id),
+  };
 
   return (
     <div className="stack-lg">
@@ -81,11 +79,9 @@ export default async function PdfDetailPage({ params }) {
       <section className="pdf-detail section-block reveal">
         <div className="pdf-cover detail-cover" style={coverStyle}>
           {pdf.coverImage ? (
-            <Image
-              className="pdf-cover-image"
+            <CoverImage
               src={pdf.coverImage}
               alt={`${pdf.title} cover`}
-              fill
               sizes="(max-width: 980px) 100vw, 280px"
             />
           ) : null}

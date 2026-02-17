@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+const REQUIRED_SMART_CLICKS = 2;
+
 function openInNewTab(url) {
   if (!url || typeof window === "undefined") {
     return;
@@ -10,40 +12,79 @@ function openInNewTab(url) {
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
+function triggerDownload(url) {
+  if (!url || typeof window === "undefined") {
+    return;
+  }
+
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.rel = "noopener noreferrer";
+  anchor.setAttribute("download", "");
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+}
+
 export function DownloadAction({ title, pdfId, smartLink, downloadLink }) {
+  const [smartClicksCompleted, setSmartClicksCompleted] = useState(0);
+  const [noticeType, setNoticeType] = useState("idle");
   const [showNotice, setShowNotice] = useState(false);
 
+  const requiresSmartGate = Boolean(smartLink);
   const hasAnyLink = Boolean(downloadLink || smartLink);
 
+  const smartApiLink = useMemo(() => {
+    return pdfId && smartLink ? `/api/download/${pdfId}?stage=smart` : "";
+  }, [pdfId, smartLink]);
+
   const directApiLink = useMemo(() => {
-    return pdfId ? `/api/download/${pdfId}?stage=direct` : "";
-  }, [pdfId]);
+    return pdfId && downloadLink ? `/api/download/${pdfId}?stage=direct` : "";
+  }, [pdfId, downloadLink]);
 
-  const fallbackApiLink = useMemo(() => {
-    return pdfId ? `/api/download/${pdfId}?stage=smart` : "";
-  }, [pdfId]);
-
-  const directManualLink = downloadLink || smartLink || "";
-  const fallbackManualLink = fallbackApiLink || smartLink || downloadLink || "";
-  const directTarget = directApiLink || directManualLink;
+  const smartTarget = smartApiLink || smartLink || "";
+  const directTarget = directApiLink || downloadLink || smartLink || "";
+  const remainingUnlockClicks = requiresSmartGate
+    ? Math.max(REQUIRED_SMART_CLICKS - smartClicksCompleted, 0)
+    : 0;
+  const isDownloadReady = remainingUnlockClicks === 0;
 
   function handleDownloadClick() {
     if (!hasAnyLink) {
       return;
     }
 
-    openInNewTab(directTarget);
+    if (requiresSmartGate && !isDownloadReady) {
+      const nextCompleted = Math.min(smartClicksCompleted + 1, REQUIRED_SMART_CLICKS);
+      openInNewTab(smartTarget);
+      setSmartClicksCompleted(nextCompleted);
+      setNoticeType(nextCompleted >= REQUIRED_SMART_CLICKS ? "ready" : "step");
+      setShowNotice(true);
+      return;
+    }
+
+    triggerDownload(directTarget);
+    setNoticeType("download");
     setShowNotice(true);
   }
 
-  const statusText = hasAnyLink
-    ? "Status: direct download link is ready."
-    : "Download link unavailable right now.";
+  let statusText = "Download link unavailable right now.";
+
+  if (hasAnyLink) {
+    if (remainingUnlockClicks === 2) {
+      statusText = "2 clicks left to unlock download";
+    } else if (remainingUnlockClicks === 1) {
+      statusText = "1 click left to unlock download";
+    } else {
+      statusText = "Download ready";
+    }
+  }
 
   return (
     <div className="download-action">
       <button className="button-solid" type="button" disabled={!hasAnyLink} onClick={handleDownloadClick}>
-        Download PDF
+        {isDownloadReady ? "Download PDF" : "Unlock Download"}
       </button>
       <p className="download-status">{statusText}</p>
 
@@ -57,14 +98,25 @@ export function DownloadAction({ title, pdfId, smartLink, downloadLink }) {
           >
             X
           </button>
-          <p>Thanks! {title ? `"${title}"` : "Your file"} is downloading in a few seconds.</p>
-          {fallbackManualLink ? (
-            <a href={fallbackManualLink} target="_blank" rel="noopener noreferrer">
+          {noticeType === "download" ? (
+            <p>Thanks! {title ? `"${title}"` : "Your file"} is downloading in a few seconds.</p>
+          ) : noticeType === "ready" ? (
+            <p>Download ready. Click the button once to start the real PDF download.</p>
+          ) : (
+            <p>
+              Step complete. {remainingUnlockClicks} click{remainingUnlockClicks === 1 ? "" : "s"} left to
+              unlock download.
+            </p>
+          )}
+          {noticeType === "download" && directTarget ? (
+            <a href={directTarget} rel="noopener noreferrer">
               Click here if download doesn&apos;t start.
             </a>
-          ) : (
-            <p className="download-unavailable">Download link is not configured yet.</p>
-          )}
+          ) : noticeType !== "download" && smartTarget ? (
+            <a href={smartTarget} target="_blank" rel="noopener noreferrer">
+              If the ad page did not open, click here.
+            </a>
+          ) : <p className="download-unavailable">Download link is not configured yet.</p>}
         </div>
       ) : null}
     </div>
