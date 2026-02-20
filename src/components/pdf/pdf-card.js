@@ -12,7 +12,7 @@ export function PdfCard({ pdf }) {
   }
 
   const coverStyle = {
-    background: getFallbackCoverGradient(pdf.id),
+    background: getFallbackCoverGradient(pdf.publicId),
   };
 
   return (
@@ -38,7 +38,7 @@ export function PdfCard({ pdf }) {
         ) : null}
 
         <h3>
-          <Link href={`/pdf/${pdf.id}`}>{pdf.title}</Link>
+          <Link href={`/pdf/${pdf.publicId}`}>{pdf.title}</Link>
         </h3>
 
         {pdf.author ? <p className="pdf-author">By {pdf.author}</p> : null}
@@ -53,12 +53,12 @@ export function PdfCard({ pdf }) {
         ) : null}
 
         <div className="pdf-actions">
-          <Link className="button-ghost button-small" href={`/pdf/${pdf.id}`}>
+          <Link className="button-ghost button-small" href={`/pdf/${pdf.publicId}`}>
             Open
           </Link>
           <ShareButton
             title={pdf.title}
-            path={`/pdf/${pdf.id}`}
+            path={`/pdf/${pdf.publicId}`}
             className="button-ghost button-small"
             label="Share"
           />

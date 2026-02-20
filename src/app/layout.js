@@ -16,7 +16,7 @@ const bodyFont = Space_Grotesk({
 });
 
 const displayFont = DM_Serif_Display({
-  variable: "--font-display",
+  variable: "--font-display", 
   weight: "400",
   subsets: ["latin"],
 });
@@ -85,6 +85,7 @@ export default function RootLayout({ children }) {
   const adsenseClient = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT;
   const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
   const globalSchemas = [getOrganizationSchema(), getWebsiteSchema()];
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
     <html lang="en">
@@ -102,6 +103,25 @@ export default function RootLayout({ children }) {
             crossOrigin="anonymous"
             strategy="afterInteractive"
           />
+        ) : null}
+        {gaId ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                window.gtag = gtag;
+                gtag('js', new Date());
+                gtag('config', '${gaId}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
         ) : null}
         <QueryProvider>
           <ScrollToTopOnRoute />

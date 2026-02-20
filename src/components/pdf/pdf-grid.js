@@ -8,7 +8,7 @@ export function PdfGrid({ items, emptyMessage = "No results found." }) {
   return (
     <div className="pdf-grid">
       {items.map((pdf) => (
-        <PdfCard key={pdf.id} pdf={pdf} />
+        <PdfCard key={pdf.publicId} pdf={pdf} />
       ))}
     </div>
   );

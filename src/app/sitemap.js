@@ -21,7 +21,7 @@ export default async function sitemap() {
   const pdfEntries = await getSitemapPdfEntries();
 
   const pdfRoutes = pdfEntries.map((pdf) => ({
-    url: `${siteConfig.url}/pdf/${pdf.id}`,
+    url: `${siteConfig.url}/pdf/${pdf.publicId}`,
     lastModified: pdf.publishedAt ? new Date(pdf.publishedAt) : now,
     changeFrequency: "weekly",
     priority: 0.8,

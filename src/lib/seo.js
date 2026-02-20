@@ -223,7 +223,7 @@ export function getBookSchema(pdf) {
     "@type": "Book",
     name: pdf.title,
     description: pdf.summary || siteConfig.defaultDescription,
-    url: getAbsoluteUrl(`/pdf/${pdf.id}`),
+    url: getAbsoluteUrl(`/pdf/${pdf.publicId}`),
     image: pdf.coverImage || getAbsoluteUrl(siteConfig.logoPath),
     inLanguage: "en",
     keywords: Array.isArray(pdf.tags) ? pdf.tags.join(", ") : undefined,

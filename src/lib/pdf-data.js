@@ -12,6 +12,7 @@ export const pdfCategories = [
 export const pdfLibrary = [
   {
     id: 1001,
+    publicId: "clean-architecture-handbook",
     slug: "clean-architecture-handbook",
     title: "Clean Architecture Handbook",
     author: "Nora Reid",
@@ -27,6 +28,7 @@ export const pdfLibrary = [
   },
   {
     id: 1002,
+    publicId: "product-led-growth-playbook",
     slug: "product-led-growth-playbook",
     title: "Product-Led Growth Playbook",
     author: "Maya Chen",
@@ -43,6 +45,7 @@ export const pdfLibrary = [
   },
   {
     id: 1003,
+    publicId: "figma-design-systems-field-guide",
     slug: "figma-design-systems-field-guide",
     title: "Figma Design Systems Field Guide",
     author: "Alia Monroe",
@@ -59,6 +62,7 @@ export const pdfLibrary = [
   },
   {
     id: 1004,
+    publicId: "sql-for-growth-analytics",
     slug: "sql-for-growth-analytics",
     title: "SQL for Growth Analytics",
     author: "Rafael Gomez",
@@ -75,6 +79,7 @@ export const pdfLibrary = [
   },
   {
     id: 1005,
+    publicId: "performance-marketing-blueprint",
     slug: "performance-marketing-blueprint",
     title: "Performance Marketing Blueprint",
     author: "Julius Park",
@@ -91,6 +96,7 @@ export const pdfLibrary = [
   },
   {
     id: 1006,
+    publicId: "startup-finance-operating-model",
     slug: "startup-finance-operating-model",
     title: "Startup Finance Operating Model",
     author: "Adrian Holt",
@@ -107,6 +113,7 @@ export const pdfLibrary = [
   },
   {
     id: 1007,
+    publicId: "resume-and-interview-manual",
     slug: "resume-and-interview-manual",
     title: "Resume and Interview Manual",
     author: "Keisha Boyd",
@@ -123,6 +130,7 @@ export const pdfLibrary = [
   },
   {
     id: 1008,
+    publicId: "personal-health-habits-blueprint",
     slug: "personal-health-habits-blueprint",
     title: "Personal Health Habits Blueprint",
     author: "Dr. Lena Ortiz",
@@ -139,6 +147,7 @@ export const pdfLibrary = [
   },
   {
     id: 1009,
+    publicId: "nextjs-scaling-handbook",
     slug: "nextjs-scaling-handbook",
     title: "Next.js Scaling Handbook",
     author: "Iris Navarro",
@@ -171,8 +180,8 @@ export function findPdfBySlug(slug) {
   return pdfLibrary.find((pdf) => pdf.slug === slug);
 }
 
-export function findPdfById(id) {
-  return pdfLibrary.find((pdf) => String(pdf.id) === String(id));
+export function findPdfByPublicId(publicId) {
+  return pdfLibrary.find((pdf) => pdf.publicId === publicId);
 }
 
 export function searchPdfs(query = "") {

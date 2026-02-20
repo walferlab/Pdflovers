@@ -8,7 +8,7 @@ import { ShareButton } from "@/components/pdf/share-button";
 import { JsonLdScript } from "@/components/seo/json-ld";
 import { getFallbackCoverGradient } from "@/lib/covers";
 import { formatDate } from "@/lib/format";
-import { getPdfById, getRelatedPdfs } from "@/lib/pdfs/repository";
+import { getPdfByPublicId, getRelatedPdfs } from "@/lib/pdfs/repository";
 import {
   getBookSchema,
   getBreadcrumbSchema,
@@ -18,7 +18,7 @@ import {
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const pdf = await getPdfById(resolvedParams.id);
+  const pdf = await getPdfByPublicId(resolvedParams.public_id);
 
   if (!pdf) {
     return {
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }) {
   return getPageMetadata({
     title: pdf.title,
     description: pdf.summary,
-    path: `/pdf/${pdf.id}`,
+    path: `/pdf/${pdf.publicId}`,
     keywords: Array.isArray(pdf.tags) ? pdf.tags : [],
     imagePath: pdf.coverImage || "/logo.png",
     openGraphType: "book",
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }) {
 
 export default async function PdfDetailPage({ params }) {
   const resolvedParams = await params;
-  const pdf = await getPdfById(resolvedParams.id);
+  const pdf = await getPdfByPublicId(resolvedParams.public_id);
   const detailAdSlot = process.env.NEXT_PUBLIC_GOOGLE_AD_SLOT_DETAIL;
   const globalSmartLink = process.env.NEXT_PUBLIC_SMARTLINK_URL;
   const globalDownloadLink = process.env.NEXT_PUBLIC_DIRECT_DOWNLOAD_URL;
@@ -54,23 +54,23 @@ export default async function PdfDetailPage({ params }) {
     typeof pdf.rating === "number" ? { label: "Rating", value: `${pdf.rating} / 5` } : null,
   ].filter(Boolean);
 
-  const related = await getRelatedPdfs(pdf.id, pdf.category, 3);
+  const related = await getRelatedPdfs(pdf.publicId, pdf.category, 3);
   const detailSchemas = [
     getWebPageSchema({
       title: pdf.title,
       description: pdf.summary,
-      path: `/pdf/${pdf.id}`,
+      path: `/pdf/${pdf.publicId}`,
     }),
     getBookSchema(pdf),
     getBreadcrumbSchema([
       { name: "Home", path: "/" },
       { name: "Library", path: "/library" },
-      { name: pdf.title, path: `/pdf/${pdf.id}` },
+      { name: pdf.title, path: `/pdf/${pdf.publicId}` },
     ]),
   ];
 
   const coverStyle = {
-    background: getFallbackCoverGradient(pdf.id),
+    background: getFallbackCoverGradient(pdf.publicId),
   };
 
   return (
@@ -116,7 +116,7 @@ export default async function PdfDetailPage({ params }) {
           <div className="hero-actions">
             <DownloadAction
               title={pdf.title}
-              pdfId={pdf.id}
+              pdfPublicId={pdf.publicId}
               smartLink={pdf.smartLink || globalSmartLink}
               downloadLink={pdf.downloadLink || globalDownloadLink}
             />
@@ -138,7 +138,7 @@ export default async function PdfDetailPage({ params }) {
           </div>
           <div className="related-list">
             {related.map((item) => (
-              <Link key={item.id} className="related-item" href={`/pdf/${item.id}`}>
+              <Link key={item.publicId} className="related-item" href={`/pdf/${item.publicId}`}>
                 <span>{item.title}</span>
                 {item.author ? <small>{item.author}</small> : null}
               </Link>

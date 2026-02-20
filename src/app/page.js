@@ -45,7 +45,7 @@ export default async function HomePage() {
         "@type": "ListItem",
         position: index + 1,
         name: pdf.title,
-        url: getAbsoluteUrl(`/pdf/${pdf.id}`),
+        url: getAbsoluteUrl(`/pdf/${pdf.publicId}`),
       })),
     },
   ];

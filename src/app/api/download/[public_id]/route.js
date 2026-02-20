@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getPdfById } from "@/lib/pdfs/repository";
+import { getPdfByPublicId } from "@/lib/pdfs/repository";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 
 const CLICK_STAGE_SMART = "smart";
@@ -26,7 +26,7 @@ function sanitizeFilenamePart(value) {
 }
 
 function resolveDownloadFilename(pdf) {
-  const fallbackBase = sanitizeFilenamePart(pdf?.title) || `pdf-${pdf?.id || "file"}`;
+  const fallbackBase = sanitizeFilenamePart(pdf?.title) || `pdf-${pdf?.publicId || "file"}`;
   return fallbackBase.toLowerCase().endsWith(".pdf") ? fallbackBase : `${fallbackBase}.pdf`;
 }
 
@@ -45,7 +45,7 @@ function logDownloadEvent(admin, payload) {
 }
 
 function incrementDownloadCount(admin, pdf) {
-  if (typeof pdf.dbId !== "number") {
+  if (typeof pdf.serialNumber !== "number") {
     return;
   }
 
@@ -54,7 +54,7 @@ function incrementDownloadCount(admin, pdf) {
   admin
     .from("pdfs")
     .update({ download_count: baseCount + 1 })
-    .eq("id", pdf.dbId)
+    .eq("id", pdf.serialNumber)
     .then(({ error }) => {
       if (error) {
         console.error("Failed to update download count", error);
@@ -101,7 +101,7 @@ export async function GET(request, { params }) {
   const resolvedParams = await params;
   const { searchParams } = new URL(request.url);
   const stage = resolveStage(searchParams.get("stage"));
-  const pdf = await getPdfById(resolvedParams.id);
+  const pdf = await getPdfByPublicId(resolvedParams.public_id);
 
   if (!pdf) {
     return NextResponse.json({ error: "PDF not found" }, { status: 404 });
@@ -114,9 +114,9 @@ export async function GET(request, { params }) {
   const referer = request.headers.get("referer") || null;
 
   if (admin) {
-    if (typeof pdf.dbId === "number") {
+    if (typeof pdf.serialNumber === "number") {
       logDownloadEvent(admin, {
-        pdf_id: pdf.dbId,
+        pdf_id: pdf.serialNumber,
         click_stage: stage,
         referer,
         user_agent: userAgent,

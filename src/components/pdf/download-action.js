@@ -27,7 +27,7 @@ function triggerDownload(url) {
   anchor.remove();
 }
 
-export function DownloadAction({ title, pdfId, smartLink, downloadLink }) {
+export function DownloadAction({ title, pdfPublicId, smartLink, downloadLink }) {
   const [smartClicksCompleted, setSmartClicksCompleted] = useState(0);
   const [noticeType, setNoticeType] = useState("idle");
   const [showNotice, setShowNotice] = useState(false);
@@ -36,12 +36,12 @@ export function DownloadAction({ title, pdfId, smartLink, downloadLink }) {
   const hasAnyLink = Boolean(downloadLink || smartLink);
 
   const smartApiLink = useMemo(() => {
-    return pdfId && smartLink ? `/api/download/${pdfId}?stage=smart` : "";
-  }, [pdfId, smartLink]);
+    return pdfPublicId && smartLink ? `/api/download/${pdfPublicId}?stage=smart` : "";
+  }, [pdfPublicId, smartLink]);
 
   const directApiLink = useMemo(() => {
-    return pdfId && downloadLink ? `/api/download/${pdfId}?stage=direct` : "";
-  }, [pdfId, downloadLink]);
+    return pdfPublicId && downloadLink ? `/api/download/${pdfPublicId}?stage=direct` : "";
+  }, [pdfPublicId, downloadLink]);
 
   const smartTarget = smartApiLink || smartLink || "";
   const directTarget = directApiLink || downloadLink || smartLink || "";

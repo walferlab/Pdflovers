@@ -17,7 +17,7 @@ const MAX_RESULTS = 48;
 const PDF_SELECT_COLUMNS =
   "id,public_id,title,author,category,tags,page_count,rating,summary,cover_image_url,published_at,smart_link,download_url,download_count";
 const PDF_SELECT_COLUMNS_WITH_FEATURED = `${PDF_SELECT_COLUMNS},is_featured`;
-const PDF_SITEMAP_SELECT_COLUMNS = "id,public_id,published_at";
+const PDF_SITEMAP_SELECT_COLUMNS = "public_id,published_at";
 
 function normalizeTags(value) {
   if (!value) {
@@ -40,12 +40,16 @@ function normalizeTags(value) {
 
 function mapPdfRecord(record) {
   const numericId = typeof record.id === "number" ? record.id : Number(record.id);
-  const dbId = Number.isFinite(numericId) ? numericId : null;
-  const publicId = record.public_id || record.publicId || null;
+  const serialNumber = Number.isFinite(numericId) ? numericId : null;
+  const publicId = String(record.public_id || record.publicId || "").trim();
+
+  if (!publicId) {
+    return null;
+  }
 
   return {
-    id: String(publicId || record.id),
-    dbId,
+    publicId,
+    serialNumber,
     title: record.title,
     author: record.author || null,
     category: record.category || "General",
@@ -67,10 +71,18 @@ function mapPdfRecord(record) {
 }
 
 function mapFallbackPdf(record) {
+  const publicId = String(record.publicId || record.public_id || record.slug || "").trim();
+
+  if (!publicId) {
+    return null;
+  }
+
+  const { id: _legacyId, ...rest } = record;
+
   return {
-    ...record,
-    id: String(record.id),
-    dbId: null,
+    ...rest,
+    publicId,
+    serialNumber: null,
     tags: normalizeTags(record.tags),
     coverImage: record.coverImage || null,
     smartLink: record.smartLink || null,
@@ -81,6 +93,7 @@ function mapFallbackPdf(record) {
 function getFallbackSearchResults(query, limit) {
   return searchPdfs(query)
     .map(mapFallbackPdf)
+    .filter(Boolean)
     .slice(0, limit);
 }
 
@@ -98,21 +111,25 @@ async function fetchPdfsWithBuilder(builder) {
     return null;
   }
 
-  return Array.isArray(data) ? data.map(mapPdfRecord) : null;
+  if (!Array.isArray(data)) {
+    return null;
+  }
+
+  return data.map(mapPdfRecord).filter(Boolean);
 }
 
-async function fetchPdfRecordById(id) {
+async function fetchPdfRecordByPublicId(publicId) {
   const admin = createSupabaseAdminClient();
-  const normalizedId = String(id || "").trim();
+  const normalizedPublicId = String(publicId || "").trim();
 
-  if (!admin || !normalizedId) {
+  if (!admin || !normalizedPublicId) {
     return null;
   }
 
   const { data: publicData, error: publicError } = await admin
     .from(PDF_TABLE)
     .select(PDF_SELECT_COLUMNS)
-    .eq("public_id", normalizedId)
+    .eq("public_id", normalizedPublicId)
     .maybeSingle();
 
   if (publicError) {
@@ -124,22 +141,7 @@ async function fetchPdfRecordById(id) {
     return mapPdfRecord(publicData);
   }
 
-  if (!/^\d+$/.test(normalizedId)) {
-    return null;
-  }
-
-  const { data: legacyData, error: legacyError } = await admin
-    .from(PDF_TABLE)
-    .select(PDF_SELECT_COLUMNS)
-    .eq("id", Number(normalizedId))
-    .maybeSingle();
-
-  if (legacyError) {
-    console.error("Supabase PDF lookup failed", legacyError);
-    return null;
-  }
-
-  return legacyData ? mapPdfRecord(legacyData) : null;
+  return null;
 }
 
 const getFeaturedPdfsCached = unstable_cache(
@@ -158,7 +160,7 @@ const getFeaturedPdfsCached = unstable_cache(
       return supabaseResults;
     }
 
-    return topPdfs(limit).map(mapFallbackPdf);
+    return topPdfs(limit).map(mapFallbackPdf).filter(Boolean);
   },
   ["pdf-featured"],
   {
@@ -182,7 +184,7 @@ const getNewestPdfsCached = unstable_cache(
       return supabaseResults;
     }
 
-    return newestPdfs(limit).map(mapFallbackPdf);
+    return newestPdfs(limit).map(mapFallbackPdf).filter(Boolean);
   },
   ["pdf-newest"],
   {
@@ -238,24 +240,24 @@ const searchPdfsCached = unstable_cache(
   },
 );
 
-const getPdfByIdCached = unstable_cache(
-  async (id) => {
-    const normalizedId = String(id || "").trim();
+const getPdfByPublicIdCached = unstable_cache(
+  async (publicId) => {
+    const normalizedPublicId = String(publicId || "").trim();
 
-    if (!normalizedId) {
+    if (!normalizedPublicId) {
       return null;
     }
 
-    const supabaseRecord = await fetchPdfRecordById(normalizedId);
+    const supabaseRecord = await fetchPdfRecordByPublicId(normalizedPublicId);
 
     if (supabaseRecord) {
       return supabaseRecord;
     }
 
-    const fallbackRecord = pdfLibrary.find((item) => String(item.id) === normalizedId);
+    const fallbackRecord = pdfLibrary.find((item) => item.publicId === normalizedPublicId);
     return fallbackRecord ? mapFallbackPdf(fallbackRecord) : null;
   },
-  ["pdf-by-id"],
+  ["pdf-by-public-id"],
   {
     revalidate: 300,
     tags: ["pdfs", "pdf-detail"],
@@ -263,8 +265,8 @@ const getPdfByIdCached = unstable_cache(
 );
 
 const getRelatedPdfsCached = unstable_cache(
-  async (id, category, limit) => {
-    const normalizedId = String(id || "").trim();
+  async (publicId, category, limit) => {
+    const normalizedPublicId = String(publicId || "").trim();
     const normalizedLimit = Math.min(Math.max(Number(limit) || 3, 1), 12);
 
     if (hasSupabaseServiceRoleEnv() && category) {
@@ -273,7 +275,7 @@ const getRelatedPdfsCached = unstable_cache(
           .from(PDF_TABLE)
           .select(PDF_SELECT_COLUMNS)
           .eq("category", category)
-          .neq("public_id", normalizedId)
+          .neq("public_id", normalizedPublicId)
           .order("published_at", { ascending: false, nullsFirst: false })
           .limit(normalizedLimit),
       );
@@ -284,9 +286,10 @@ const getRelatedPdfsCached = unstable_cache(
     }
 
     return pdfLibrary
-      .filter((item) => String(item.id) !== normalizedId && item.category === category)
+      .filter((item) => item.publicId !== normalizedPublicId && item.category === category)
       .slice(0, normalizedLimit)
-      .map(mapFallbackPdf);
+      .map(mapFallbackPdf)
+      .filter(Boolean);
   },
   ["pdf-related"],
   {
@@ -306,13 +309,13 @@ const getAllPdfsForSitemapCached = unstable_cache(
 
     if (supabaseResults) {
       return supabaseResults.map((item) => ({
-        id: item.id,
+        publicId: item.publicId,
         publishedAt: item.publishedAt || null,
       }));
     }
 
     return pdfLibrary.map((item) => ({
-      id: item.id,
+      publicId: item.publicId,
       publishedAt: item.publishedAt || null,
     }));
   },
@@ -365,12 +368,12 @@ export async function searchPdfLibrary(query = "", { limit = 24 } = {}) {
   return searchPdfsCached(query, limit);
 }
 
-export async function getPdfById(id) {
-  return getPdfByIdCached(id);
+export async function getPdfByPublicId(publicId) {
+  return getPdfByPublicIdCached(publicId);
 }
 
-export async function getRelatedPdfs(id, category, limit = 3) {
-  return getRelatedPdfsCached(id, category, limit);
+export async function getRelatedPdfs(publicId, category, limit = 3) {
+  return getRelatedPdfsCached(publicId, category, limit);
 }
 
 export async function getPdfCategories() {
