@@ -33,7 +33,7 @@ export function GoogleAdSlot({ slot, className = "" }) {
       <div className="ad-slot-frame">
         <ins
           className="adsbygoogle"
-          style={{ display: "block" }}
+          style={{ display: "block", width: "100%" }}
           data-ad-client={adClient}
           data-ad-slot={slot}
           data-ad-format="auto"

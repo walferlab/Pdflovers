@@ -206,6 +206,8 @@ img {
   border-radius: var(--radius-md);
   background: var(--surface);
   padding: 0.9rem;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .ad-slot-label {
@@ -223,6 +225,17 @@ img {
   border-radius: var(--radius-sm);
   border: 1px dashed rgba(166, 128, 91, 0.45);
   background: #fff;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.ad-slot-frame .adsbygoogle {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
 }
 
 .ad-slot-placeholder {
