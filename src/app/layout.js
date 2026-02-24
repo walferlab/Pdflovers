@@ -72,6 +72,9 @@ export const metadata = {
       maxVideoPreview: -1,
     },
   },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export const viewport = {
@@ -103,10 +106,6 @@ export default function RootLayout({ children }) {
               })(window,document,'script','dataLayer','GTM-T8FHQ72F');
             `,
           }}
-    
-        {googleSiteVerification ? (
-          <meta name="google-site-verification" content={googleSiteVerification} />
-        ) : null}
       </head>
       <body className={`${bodyFont.variable} ${displayFont.variable}`}>
         {/* Google Tag Manager (noscript) */}
