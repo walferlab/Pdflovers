@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-const DEFAULT_PREVIEW_LENGTH = 220;
+const DEFAULT_PREVIEW_LENGTH = 120;
 
 export function SummaryToggle({ summary, previewLength = DEFAULT_PREVIEW_LENGTH }) {
   const [isExpanded, setIsExpanded] = useState(false);

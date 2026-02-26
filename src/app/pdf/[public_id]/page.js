@@ -6,6 +6,7 @@ import { CoverImage } from "@/components/pdf/cover-image";
 import { DownloadAction } from "@/components/pdf/download-action";
 import { ShareButton } from "@/components/pdf/share-button";
 import { SummaryToggle } from "@/components/pdf/summary-toggle";
+import { TagListToggle } from "@/components/pdf/tag-list-toggle";
 import { JsonLdScript } from "@/components/seo/json-ld";
 import { getFallbackCoverGradient } from "@/lib/covers";
 import { formatDate } from "@/lib/format";
@@ -93,15 +94,7 @@ export default async function PdfDetailPage({ params }) {
           <p className="eyebrow">PDF Details</p>
           <h1>{pdf.title}</h1>
           <SummaryToggle summary={pdf.summary} />
-          {Array.isArray(pdf.tags) && pdf.tags.length ? (
-            <div className="tag-list">
-              {pdf.tags.map((tag) => (
-                <span key={tag} className="tag-pill">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          ) : null}
+          <TagListToggle tags={pdf.tags} />
 
           {metrics.length ? (
             <dl className="detail-metrics">

@@ -150,6 +150,7 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 42px;
   border-radius: 999px;
   padding: 0.68rem 1.2rem;
   font-size: 0.94rem;
@@ -160,6 +161,7 @@ img {
 }
 
 .button-small {
+  min-height: 34px;
   padding: 0.45rem 0.84rem;
   font-size: 0.82rem;
 }
@@ -564,6 +566,9 @@ img {
 }
 
 .summary-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
   width: fit-content;
   padding: 0;
   border: 0;
@@ -572,6 +577,7 @@ img {
   font: inherit;
   font-size: 0.88rem;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -592,6 +598,17 @@ img {
   border-radius: 999px;
   font-size: 0.75rem;
   padding: 0.28rem 0.64rem;
+}
+
+.tag-pill-toggle {
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.tag-pill-toggle:hover {
+  border-color: rgba(15, 92, 215, 0.45);
+  color: var(--brand);
 }
 
 .pdf-actions {

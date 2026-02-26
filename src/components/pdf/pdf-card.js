@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { CoverImage } from "@/components/pdf/cover-image";
 import { ShareButton } from "@/components/pdf/share-button";
+import { TagListToggle } from "@/components/pdf/tag-list-toggle";
 import { getFallbackCoverGradient } from "@/lib/covers";
 
 export function PdfCard({ pdf }) {
@@ -42,15 +43,7 @@ export function PdfCard({ pdf }) {
         </h3>
 
         {pdf.author ? <p className="pdf-author">By {pdf.author}</p> : null}
-        {Array.isArray(pdf.tags) && pdf.tags.length ? (
-          <div className="tag-list">
-            {pdf.tags.map((tag) => (
-              <span key={tag} className="tag-pill">
-                {tag}
-              </span>
-            ))}
-          </div>
-        ) : null}
+        <TagListToggle tags={pdf.tags} />
 
         <div className="pdf-actions">
           <Link className="button-ghost button-small" href={`/pdf/${pdf.publicId}`}>
