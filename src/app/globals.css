@@ -558,6 +558,27 @@ img {
   color: var(--ink-soft);
 }
 
+.summary-toggle {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.summary-toggle-button {
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--brand);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.summary-toggle-button:hover {
+  text-decoration: underline;
+}
+
 .tag-list {
   display: flex;
   flex-wrap: wrap;

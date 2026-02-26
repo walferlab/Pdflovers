@@ -5,6 +5,7 @@ import { GoogleAdSlot } from "@/components/ads/google-ad-slot";
 import { CoverImage } from "@/components/pdf/cover-image";
 import { DownloadAction } from "@/components/pdf/download-action";
 import { ShareButton } from "@/components/pdf/share-button";
+import { SummaryToggle } from "@/components/pdf/summary-toggle";
 import { JsonLdScript } from "@/components/seo/json-ld";
 import { getFallbackCoverGradient } from "@/lib/covers";
 import { formatDate } from "@/lib/format";
@@ -91,7 +92,7 @@ export default async function PdfDetailPage({ params }) {
         <div className="detail-copy">
           <p className="eyebrow">PDF Details</p>
           <h1>{pdf.title}</h1>
-          {pdf.summary ? <p>{pdf.summary}</p> : null}
+          <SummaryToggle summary={pdf.summary} />
           {Array.isArray(pdf.tags) && pdf.tags.length ? (
             <div className="tag-list">
               {pdf.tags.map((tag) => (

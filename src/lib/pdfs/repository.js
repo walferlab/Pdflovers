@@ -1,15 +1,8 @@
 import { unstable_cache } from "next/cache";
 
 import {
-  newestPdfs,
-  pdfCategories,
-  pdfLibrary,
-  searchPdfs,
-  topPdfs,
-} from "@/lib/pdf-data";
-import {
   createSupabaseAdminClient,
-  hasSupabaseServiceRoleEnv,
+  createSupabaseBrowserCompatibleClient,
 } from "@/lib/supabase/server";
 
 const PDF_TABLE = "pdfs";
@@ -70,35 +63,8 @@ function mapPdfRecord(record) {
   };
 }
 
-function mapFallbackPdf(record) {
-  const publicId = String(record.publicId || record.public_id || record.slug || "").trim();
-
-  if (!publicId) {
-    return null;
-  }
-
-  const { id: _legacyId, ...rest } = record;
-
-  return {
-    ...rest,
-    publicId,
-    serialNumber: null,
-    tags: normalizeTags(record.tags),
-    coverImage: record.coverImage || null,
-    smartLink: record.smartLink || null,
-    downloadLink: record.downloadLink || null,
-  };
-}
-
-function getFallbackSearchResults(query, limit) {
-  return searchPdfs(query)
-    .map(mapFallbackPdf)
-    .filter(Boolean)
-    .slice(0, limit);
-}
-
 async function fetchPdfsWithBuilder(builder) {
-  const admin = createSupabaseAdminClient();
+  const admin = createSupabaseAdminClient() || createSupabaseBrowserCompatibleClient();
 
   if (!admin) {
     return null;
@@ -119,7 +85,7 @@ async function fetchPdfsWithBuilder(builder) {
 }
 
 async function fetchPdfRecordByPublicId(publicId) {
-  const admin = createSupabaseAdminClient();
+  const admin = createSupabaseAdminClient() || createSupabaseBrowserCompatibleClient();
   const normalizedPublicId = String(publicId || "").trim();
 
   if (!admin || !normalizedPublicId) {
@@ -160,7 +126,7 @@ const getFeaturedPdfsCached = unstable_cache(
       return supabaseResults;
     }
 
-    return topPdfs(limit).map(mapFallbackPdf).filter(Boolean);
+    return [];
   },
   ["pdf-featured"],
   {
@@ -184,7 +150,7 @@ const getNewestPdfsCached = unstable_cache(
       return supabaseResults;
     }
 
-    return newestPdfs(limit).map(mapFallbackPdf).filter(Boolean);
+    return [];
   },
   ["pdf-newest"],
   {
@@ -212,7 +178,7 @@ const searchPdfsCached = unstable_cache(
         return supabaseResults;
       }
 
-      return getFallbackSearchResults("", normalizedLimit);
+      return [];
     }
 
     const supabaseResults = await fetchPdfsWithBuilder((admin) =>
@@ -231,7 +197,7 @@ const searchPdfsCached = unstable_cache(
       return supabaseResults;
     }
 
-    return getFallbackSearchResults(normalizedQuery, normalizedLimit);
+    return [];
   },
   ["pdf-search"],
   {
@@ -254,8 +220,7 @@ const getPdfByPublicIdCached = unstable_cache(
       return supabaseRecord;
     }
 
-    const fallbackRecord = pdfLibrary.find((item) => item.publicId === normalizedPublicId);
-    return fallbackRecord ? mapFallbackPdf(fallbackRecord) : null;
+    return null;
   },
   ["pdf-by-public-id"],
   {
@@ -269,27 +234,21 @@ const getRelatedPdfsCached = unstable_cache(
     const normalizedPublicId = String(publicId || "").trim();
     const normalizedLimit = Math.min(Math.max(Number(limit) || 3, 1), 12);
 
-    if (hasSupabaseServiceRoleEnv() && category) {
-      const supabaseResults = await fetchPdfsWithBuilder((admin) =>
-        admin
-          .from(PDF_TABLE)
-          .select(PDF_SELECT_COLUMNS)
-          .eq("category", category)
-          .neq("public_id", normalizedPublicId)
-          .order("published_at", { ascending: false, nullsFirst: false })
-          .limit(normalizedLimit),
-      );
-
-      if (supabaseResults) {
-        return supabaseResults;
-      }
+    if (!category) {
+      return [];
     }
 
-    return pdfLibrary
-      .filter((item) => item.publicId !== normalizedPublicId && item.category === category)
-      .slice(0, normalizedLimit)
-      .map(mapFallbackPdf)
-      .filter(Boolean);
+    const supabaseResults = await fetchPdfsWithBuilder((admin) =>
+      admin
+        .from(PDF_TABLE)
+        .select(PDF_SELECT_COLUMNS)
+        .eq("category", category)
+        .neq("public_id", normalizedPublicId)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .limit(normalizedLimit),
+    );
+
+    return supabaseResults || [];
   },
   ["pdf-related"],
   {
@@ -314,10 +273,7 @@ const getAllPdfsForSitemapCached = unstable_cache(
       }));
     }
 
-    return pdfLibrary.map((item) => ({
-      publicId: item.publicId,
-      publishedAt: item.publishedAt || null,
-    }));
+    return [];
   },
   ["pdf-sitemap"],
   {
@@ -328,26 +284,20 @@ const getAllPdfsForSitemapCached = unstable_cache(
 
 const getPdfCategoriesCached = unstable_cache(
   async () => {
-    if (hasSupabaseServiceRoleEnv()) {
-      const admin = createSupabaseAdminClient();
+    const admin = createSupabaseAdminClient() || createSupabaseBrowserCompatibleClient();
 
-      if (admin) {
-        const { data, error } = await admin
-          .from(PDF_TABLE)
-          .select("category")
-          .not("category", "is", null);
+    if (admin) {
+      const { data, error } = await admin
+        .from(PDF_TABLE)
+        .select("category")
+        .not("category", "is", null);
 
-        if (!error && Array.isArray(data)) {
-          const categories = [...new Set(data.map((item) => item.category).filter(Boolean))].sort();
-
-          if (categories.length) {
-            return categories;
-          }
-        }
+      if (!error && Array.isArray(data)) {
+        return [...new Set(data.map((item) => item.category).filter(Boolean))].sort();
       }
     }
 
-    return pdfCategories;
+    return [];
   },
   ["pdf-categories"],
   {
