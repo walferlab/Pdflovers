@@ -39,7 +39,7 @@ export function TagListToggle({ tags, visibleCount = DEFAULT_VISIBLE_TAGS }) {
           onClick={() => setIsExpanded((previous) => !previous)}
           aria-expanded={isExpanded}
         >
-          {isExpanded ? "Show less" : `(+${hiddenCount})`}
+          {isExpanded ? "Show less" : `+${hiddenCount}`}
         </button>
       ) : null}
     </div>

@@ -73,9 +73,9 @@ export function DownloadAction({ title, pdfPublicId, smartLink, downloadLink }) 
 
   if (hasAnyLink) {
     if (remainingUnlockClicks === 2) {
-      statusText = "2 clicks left to unlock download";
+      statusText = "2 clicks left";
     } else if (remainingUnlockClicks === 1) {
-      statusText = "1 click left to unlock download";
+      statusText = "1 click left";
     } else {
       statusText = "Download ready";
     }
