@@ -1,5 +1,6 @@
 import { DM_Serif_Display, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -157,6 +158,7 @@ export default function RootLayout({ children }) {
             <SiteFooter />
           </div>
         </QueryProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
