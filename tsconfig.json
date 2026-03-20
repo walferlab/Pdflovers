@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "app/components/ui/navbar.jsx", "app/components/ui/button.jsx", "app/library/page.jsx", "app/page.jsx", "app/pdf/[slug]/page.jsx", "lib/pdf-links.js"  ],
   "exclude": ["node_modules"]
 }

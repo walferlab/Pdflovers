@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+@theme {
+    --font-brand : "Asap", sans-serif;
+    --font-satoshi : "Satoshi", sans-serif;
+    --font-display : "Be Vietnam Pro", sans-serif;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    color: #fdfdfd;
+    box-sizing: border-box;
+    background: #0a0a0a;
+}
+
+::--webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
