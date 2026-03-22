@@ -6,8 +6,8 @@ import { Heart, Copy, Check, ExternalLink, Star } from "lucide-react";
 
 const PAYPAL_DONATE =
     `https://www.paypal.com/donate?business=${encodeURIComponent("support@pdflovers.app")}&currency_code=USD&item_name=Support+PDF+Lovers`;
-const PAYPAL_ME = "https://paypal.me/pdflovers";
-const PAYPAL_EMAIL = "support@pdflovers.app";
+const PAYPAL_ME = "https://www.paypal.com/ncp/payment/NKJYH2F95ETAE";
+const PAYPAL_EMAIL = "rafortwalfer@gmail.com";
 const AMAZON_REVIEW = "https://www.amazon.com/books-used-books-textbooks/b?node=283155";
 const SITE_URL = "https://pdflovers.app";
 
