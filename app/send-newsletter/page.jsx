@@ -63,9 +63,9 @@ export default function SendNewsletterPage() {
     const [genre, setGenre]               = useState("all");
     const [preview, setPreview]           = useState(false);
     const [sending, setSending]           = useState(false);
-    const [result, setResult]             = useState<null | { success: boolean; sent?: number; failed?: number; total?: number; error?: string }>(null);
-    const [subCount, setSubCount]         = useState<number | null>(null);
-    const [logs, setLogs]                 = useState<any[]>([]);
+    const [result, setResult]             = useState(null);
+    const [subCount, setSubCount]         = useState(null);
+    const [logs, setLogs]                 = useState([]);
     const [logsLoading, setLogsLoading]   = useState(true);
     const [templateOpen, setTemplateOpen] = useState(false);
 
