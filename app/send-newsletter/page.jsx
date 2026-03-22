@@ -93,7 +93,7 @@ export default function SendNewsletterPage() {
         setLogsLoading(false);
     };
 
-    const applyTemplate = (t: typeof TEMPLATES[0]) => {
+    const applyTemplate = (t) => {
         setSubject(t.subject);
         setHtml(t.html);
         setTemplateOpen(false);
