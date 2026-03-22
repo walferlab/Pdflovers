@@ -11,10 +11,11 @@ import {
     BookHeart,
     ArrowLeft,
     X,
-    Upload,
+    Bell,
     DollarSign,
     MessageSquareHeart,
 } from "lucide-react";
+import { SubscribeModal } from "./subscribe-modal";
 
 const NAV_ITEMS = [
     { icon: House,      label: "Home",    href: "/" },
@@ -34,7 +35,7 @@ const SECONDARY_ITEMS = [
 ];
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
-export function Navbar({ onMenuToggle }) {
+export function Navbar({ onMenuToggle, onSubscribeOpen }) {
     const [activeSearch, setActiveSearch] = useState(false);
     const [query, setQuery]               = useState("");
     const inputRef                        = useRef(null);
@@ -122,12 +123,14 @@ export function Navbar({ onMenuToggle }) {
                             <Search size={18} />
                         </button>
 
-                        {/* Upload */}
+                        {/* Subscribe */}
                         <button
+                            onClick={onSubscribeOpen}
                             className="w-8 h-8 flex items-center justify-center rounded-full text-[#888] hover:text-white transition-colors"
                             style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+                            aria-label="Subscribe to newsletter"
                         >
-                            <Upload size={15} />
+                            <Bell size={15} />
                         </button>
                     </>
                 )}
@@ -174,13 +177,14 @@ export function Navbar({ onMenuToggle }) {
                     </form>
                 </div>
 
-                {/* Upload */}
+                {/* Subscribe */}
                 <button
+                    onClick={onSubscribeOpen}
                     className="flex items-center gap-2 h-8 px-4 rounded-full text-[13px] font-satoshi font-medium text-white transition-all hover:opacity-80 shrink-0"
                     style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)" }}
                 >
-                    <Upload size={13} />
-                    Upload
+                    <Bell size={13} />
+                    Subscribe
                 </button>
             </div>
         </header>
@@ -393,8 +397,9 @@ export function Sidebar({ menu }) {
 
 // ─── Layout ───────────────────────────────────────────────────────────────────
 export function NavLayout() {
-    const [menu,       setMenu]       = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [menu,           setMenu]           = useState(false);
+    const [drawerOpen,     setDrawerOpen]     = useState(false);
+    const [subscribeOpen,  setSubscribeOpen]  = useState(false);
 
     return (
         <>
@@ -407,9 +412,11 @@ export function NavLayout() {
                         setMenu((prev) => !prev);
                     }
                 }}
+                onSubscribeOpen={() => setSubscribeOpen(true)}
             />
             <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
             <Sidebar menu={menu} />
+            <SubscribeModal open={subscribeOpen} onClose={() => setSubscribeOpen(false)} />
             {/* <BottomNav /> */}
         </>
     );
