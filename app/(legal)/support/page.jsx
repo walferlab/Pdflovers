@@ -4,24 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Heart, Copy, Check, ExternalLink, Star } from "lucide-react";
 
-const PAYPAL_DONATE =
-    `https://www.paypal.com/donate?business=${encodeURIComponent("support@pdflovers.app")}&currency_code=USD&item_name=Support+PDF+Lovers`;
-const PAYPAL_ME = "https://www.paypal.com/ncp/payment/NKJYH2F95ETAE";
-const PAYPAL_EMAIL = "rafortwalfer@gmail.com";
-const AMAZON_REVIEW = "https://www.amazon.com/books-used-books-textbooks/b?node=283155";
-const SITE_URL = "https://pdflovers.app";
 
-function useCopy() {
-    const [copied, setCopied] = useState(false);
-
-    const copy = (text) => {
-        navigator.clipboard.writeText(text).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        });
-    };
-
-    return [copied, copy];
 }
 
 export default function SupportPage() {
@@ -68,70 +51,6 @@ export default function SupportPage() {
                 </div>
 
                 <div className="border-t border-white/[0.05] mb-10" />
-
-                <section
-                    className="flex flex-col gap-5 mb-12"
-                    style={{ animation: "fadeUp .45s .08s both" }}
-                >
-                    <div className="flex flex-col gap-1">
-                        <p className="font-satoshi font-semibold text-[10.5px] tracking-[0.08em] uppercase text-[#383838]">
-                            Donate
-                        </p>
-                        <h2
-                            className="font-brand font-bold text-[18px] text-[#d0d0d0]"
-                            style={{ letterSpacing: "-0.025em" }}
-                        >
-                            Chip in for server costs
-                        </h2>
-                        <p className="font-satoshi font-medium text-[13px] text-[#484848] leading-relaxed mt-0.5">
-                            Hosting isn&apos;t free. Even $2 covers a day of uptime. 100% goes toward keeping this library online.
-                        </p>
-                    </div>
-
-                    <div className="flex flex-col gap-2.5">
-                        <a
-                            href={PAYPAL_DONATE}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 w-full font-satoshi font-bold text-[13.5px] text-[#0a0800] bg-[#c8a44a] hover:bg-[#d9b55a] rounded-xl py-3 transition-all duration-150 no-underline"
-                        >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z" />
-                            </svg>
-                            Donate via PayPal
-                        </a>
-
-                        <a
-                            href={PAYPAL_ME}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 w-full font-satoshi font-semibold text-[13px] text-[#686868] bg-white/[0.04] border border-white/[0.09] hover:bg-white/[0.07] hover:border-white/[0.15] hover:text-[#a0a0a0] rounded-xl py-2.5 transition-all duration-150 no-underline"
-                        >
-                            <ExternalLink size={12} />
-                            paypal.me/pdflovers
-                        </a>
-                    </div>
-
-                    <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-white/[0.07] bg-white/[0.02]">
-                        <span className="font-satoshi font-medium text-[12px] text-[#585858] flex-1 truncate">
-                            {PAYPAL_EMAIL}
-                        </span>
-                        <button
-                            onClick={() => copyEmail(PAYPAL_EMAIL)}
-                            className="flex items-center gap-1.5 font-satoshi font-semibold text-[11px] text-[#484848] hover:text-[#888] transition-colors cursor-pointer"
-                        >
-                            {emailCopied ? (
-                                <>
-                                    <Check size={11} className="text-[#64dc8c]" /> Copied
-                                </>
-                            ) : (
-                                <>
-                                    <Copy size={11} /> Copy
-                                </>
-                            )}
-                        </button>
-                    </div>
-                </section>
 
                 <div className="border-t border-white/[0.05] mb-10" />
 
